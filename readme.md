@@ -2,6 +2,7 @@ download_favorited_images
 =========================
 
 This is the tool that download images you favorited on twitter.
+
 This tool requires Windows 8 (Windows Server 2012) and later because it depends on Windows Runtime (WinRT).
 
 How to use
