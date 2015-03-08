@@ -1,6 +1,7 @@
 ﻿Imports System.Net
 Imports Windows.Data.Json
 Imports System.IO
+Imports System.Reflection
 
 Public Class twitter
     Public Property ConsumerKey As OAuth.KeyPair
@@ -684,23 +685,28 @@ Public Class twitter
     Public Sub ConnectUserStream(ByVal act As Action(Of StreamMessage), Optional ByRef running As Boolean = True)
         Dim strm = GetUserStream()
 
+        Dim cs_t = strm.GetType()
+        Dim connection_i As PropertyInfo = Nothing
+        For Each p In cs_t.GetRuntimeProperties()
+            If p.Name = "Connection" Then
+                connection_i = p
+            End If
+        Next
+        Dim connection = connection_i.GetValue(strm)
+        Dim connection_t = connection.GetType()
+        Dim canread_i As PropertyInfo = Nothing
+        For Each p In connection_t.GetRuntimeProperties()
+            If p.Name = "CanRead" Then
+                canread_i = p
+            End If
+        Next
+
         Dim buffer(1023) As Byte
         Dim strbuilder As New Text.StringBuilder
 
-        ' dump
-        'Dim fs As New IO.FileStream("userstream.bin", FileMode.Create, FileAccess.Write, FileShare.Read)
-
-        Dim n As Integer = 0
-        While running AndAlso n < 50 AndAlso strm.CanRead
+        While running AndAlso DirectCast(canread_i.GetValue(connection), Boolean)
             Try
                 Dim length = strm.Read(buffer, 0, 1024)
-                ' dump
-                'fs.Write(buffer, 0, length)
-                If length = 0 Then
-                    n += 1
-                Else
-                    n = 0
-                End If
                 Dim temp As String = System.Text.Encoding.UTF8.GetChars(buffer, 0, length)
                 strbuilder.Append(temp)
                 While strbuilder.ToString.Contains(vbCrLf)
