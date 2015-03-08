@@ -704,7 +704,7 @@ Public Class twitter
         Dim buffer(1023) As Byte
         Dim strbuilder As New Text.StringBuilder
 
-        While running AndAlso DirectCast(canread_i.GetValue(connection), Boolean)
+        While running AndAlso strm.CanRead AndAlso DirectCast(canread_i.GetValue(connection), Boolean)
             Try
                 Dim length = strm.Read(buffer, 0, 1024)
                 Dim temp As String = System.Text.Encoding.UTF8.GetChars(buffer, 0, length)
