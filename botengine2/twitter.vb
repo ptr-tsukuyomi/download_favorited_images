@@ -682,7 +682,7 @@ Public Class twitter
         Return hres.GetResponseStream()
     End Function
 
-    Public Sub ConnectUserStream(ByVal act As Action(Of StreamMessage), Optional ByRef running As Boolean = True)
+    Public Sub ConnectUserStream(ByVal act As Action(Of StreamMessage), Optional ByRef running As Threading.CancellationToken = Nothing)
         Dim strm = GetUserStream()
 
         Dim cs_t = strm.GetType()
@@ -704,10 +704,16 @@ Public Class twitter
         Dim buffer(1023) As Byte
         Dim strbuilder As New Text.StringBuilder
 
-        While running AndAlso strm.CanRead AndAlso DirectCast(canread_i.GetValue(connection), Boolean)
+        While strm.CanRead AndAlso DirectCast(canread_i.GetValue(connection), Boolean)
             Try
-                Dim length = strm.Read(buffer, 0, 1024)
-                Dim temp As String = System.Text.Encoding.UTF8.GetChars(buffer, 0, length)
+                Dim t = strm.ReadAsync(buffer, 0, 1024)
+                Try
+                    t.Wait(running)
+                Catch e As OperationCanceledException
+                    Return
+                End Try
+
+                Dim temp As String = System.Text.Encoding.UTF8.GetChars(buffer, 0, t.Result)
                 strbuilder.Append(temp)
                 While strbuilder.ToString.Contains(vbCrLf)
                     Dim pos As Integer = strbuilder.ToString.IndexOf(vbLf)
@@ -743,6 +749,8 @@ Public Class twitter
                 End While
             Catch e As IO.IOException
                 Throw
+            Catch e As WebException
+                Return
             End Try
         End While
     End Sub

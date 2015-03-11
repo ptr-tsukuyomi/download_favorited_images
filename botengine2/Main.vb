@@ -19,10 +19,12 @@
     End Sub
 
     Dim tw As twitter = Nothing
-    Dim running As Boolean = True
+    Dim cts As New Threading.CancellationTokenSource
 
     Sub Ctrl_C(ByVal sender As Object, ByVal e As ConsoleCancelEventArgs)
-        running = False
+        cts.Cancel()
+        WriteLog("Ctrl+C has been created by user.")
+        e.Cancel = True
     End Sub
 
     Dim directory As String = ""
@@ -77,9 +79,11 @@
 
         AddHandler Console.CancelKeyPress, AddressOf Ctrl_C
 
-        While running
+        Dim token As Threading.CancellationToken = cts.Token
+
+        While Not token.IsCancellationRequested
             WriteLog("trying to connect userstream...")
-            tw.ConnectUserStream(AddressOf UserStreamCallback, running)
+            tw.ConnectUserStream(AddressOf UserStreamCallback, token)
             WriteLog("disconnected.")
         End While
 
