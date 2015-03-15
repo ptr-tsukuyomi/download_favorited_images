@@ -710,6 +710,7 @@ Public Class twitter
                 Try
                     t.Wait(running)
                 Catch e As OperationCanceledException
+                    strm.Close()
                     Return
                 End Try
 
