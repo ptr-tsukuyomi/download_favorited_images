@@ -668,22 +668,30 @@ Public Class twitter
     End Function
 
     Private Function GetUserStream() As IO.Stream
-        Dim url As New Uri("https://userstream.twitter.com/1.1/user.json")
-        Dim method As String = "POST"
-        Dim values As New TwitterAPIValues(ConsumerKey, method, url) With {.Token = AccessKey}
-        Dim hreq = HttpWebRequest.CreateHttp(url)
-        hreq.Method = method
-        hreq.ContentType = "application/x-www-form-urlencoded"
-        Dim content = System.Text.Encoding.UTF8.GetBytes(values.GetQueryString())
-        Using reqstrm = hreq.GetRequestStream()
-            reqstrm.Write(content, 0, content.Length)
-        End Using
-        Dim hres = hreq.GetResponse()
-        Return hres.GetResponseStream()
+        Try
+            Dim url As New Uri("https://userstream.twitter.com/1.1/user.json")
+            Dim method As String = "POST"
+            Dim values As New TwitterAPIValues(ConsumerKey, method, url) With {.Token = AccessKey}
+            Dim hreq = HttpWebRequest.CreateHttp(url)
+            hreq.Method = method
+            hreq.ContentType = "application/x-www-form-urlencoded"
+            Dim content = System.Text.Encoding.UTF8.GetBytes(values.GetQueryString())
+            Using reqstrm = hreq.GetRequestStream()
+                reqstrm.Write(content, 0, content.Length)
+            End Using
+            Dim hres = hreq.GetResponse()
+            Return hres.GetResponseStream()
+        Catch ex As WebException
+            Return Nothing
+        End Try
     End Function
 
     Public Sub ConnectUserStream(ByVal act As Action(Of StreamMessage), Optional ByRef running As Threading.CancellationToken = Nothing)
+
         Dim strm = GetUserStream()
+        If strm Is Nothing Then
+            Return
+        End If
 
         Dim cs_t = strm.GetType()
         Dim connection_i As PropertyInfo = Nothing
