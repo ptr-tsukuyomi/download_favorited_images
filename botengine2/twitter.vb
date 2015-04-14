@@ -556,7 +556,9 @@ Public Class twitter
         Public Property WoeID As Integer
         Public Sub New(ByVal tl As JsonObject)
             Country = tl("country").GetString
-            CountryCode = tl("countryCode").GetString()
+            If tl("countryCode").ValueType <> JsonValueType.Null Then
+                CountryCode = tl("countryCode").GetString()
+            End If
             Name = tl("name").GetString()
             ParentID = tl("parentid").GetNumber()
             PlaceType = New PlaceType(tl("placeType").GetObject)
