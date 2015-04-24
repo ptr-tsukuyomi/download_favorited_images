@@ -762,6 +762,8 @@ Public Class twitter
                 Throw
             Catch e As WebException
                 Return
+            Catch e As System.AggregateException
+                Return
             End Try
         End While
     End Sub
