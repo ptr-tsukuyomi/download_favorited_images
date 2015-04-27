@@ -85,6 +85,7 @@
             WriteLog("trying to connect userstream...")
             tw.ConnectUserStream(AddressOf UserStreamCallback, token)
             WriteLog("disconnected.")
+            System.Threading.Thread.Sleep(500)
         End While
 
         Console.WriteLine("anykey to continue")
