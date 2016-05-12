@@ -83,7 +83,7 @@
 
         While Not token.IsCancellationRequested
             WriteLog("trying to connect userstream...")
-            tw.ConnectUserStream(AddressOf UserStreamCallback, token)
+            tw.ConnectUserStream(AddressOf UserStreamCallback, 24, token)
             WriteLog("disconnected.")
             System.Threading.Thread.Sleep(500)
         End While

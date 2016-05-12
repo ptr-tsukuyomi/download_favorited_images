@@ -688,7 +688,8 @@ Public Class twitter
         End Try
     End Function
 
-    Public Sub ConnectUserStream(ByVal act As Action(Of StreamMessage), Optional ByRef running As Threading.CancellationToken = Nothing)
+    Public Sub ConnectUserStream(ByVal act As Action(Of StreamMessage), Optional ByVal resethr As Integer = 0, Optional ByRef running As Threading.CancellationToken = Nothing)
+        Dim begin = Now
 
         Dim strm = GetUserStream()
         If strm Is Nothing Then
@@ -715,6 +716,11 @@ Public Class twitter
         Dim strbuilder As New Text.StringBuilder
 
         While strm.CanRead AndAlso DirectCast(canread_i.GetValue(connection), Boolean)
+            If resethr <> 0 AndAlso (Now - begin).TotalHours >= resethr Then
+                strm.Close()
+                Exit While
+            End If
+
             Try
                 Dim t = strm.ReadAsync(buffer, 0, 1024)
                 Try
