@@ -3,7 +3,7 @@ download_favorited_images
 
 This is the tool that download images you favorited on twitter.
 
-This tool requires Windows 8 (Windows Server 2012) and later because it depends on Windows Runtime (WinRT).
+This tool requires Json.NET (Newtonsoft.Json).
 
 How to use
 ----------
@@ -26,3 +26,9 @@ Parameter "Directory" allows both absolute and relative path.
 
 Relative path base is the directory that contains executable binary.
 
+Change Log
+----------
+
+2016/08/28
+Changed json library. (Windows.Data.Json -> Newtonsoft.Json)
+Now you can run this in mono environment.
