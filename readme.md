@@ -5,6 +5,12 @@ This is the tool that download images you favorited on twitter.
 
 This tool requires Json.NET (Newtonsoft.Json).
 
+NOTICE
+------
+
+Twitter's Userstream has gone. So this tool does not work. 
+
+
 How to use
 ----------
 
